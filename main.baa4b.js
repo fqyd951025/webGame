@@ -67,23 +67,23 @@
             initAdapter();
         }
 
-        function setLoadingDisplay () {
-            // Loading splash scene
-            var splash = document.getElementById('splash');
-            var progressBar = splash.querySelector('.progress-bar span');
-            cc.loader.onProgress = function (completedCount, totalCount, item) {
-                var percent = 100 * completedCount / totalCount;
-                if (progressBar) {
-                    progressBar.style.width = percent.toFixed(2) + '%';
-                }
-            };
-            splash.style.display = 'block';
-            progressBar.style.width = '0%';
+        // function setLoadingDisplay () {
+        //     // Loading splash scene
+        //     var splash = document.getElementById('splash');
+        //     var progressBar = splash.querySelector('.progress-bar span');
+        //     cc.loader.onProgress = function (completedCount, totalCount, item) {
+        //         var percent = 100 * completedCount / totalCount;
+        //         if (progressBar) {
+        //             progressBar.style.width = percent.toFixed(2) + '%';
+        //         }
+        //     };
+        //     splash.style.display = 'block';
+        //     progressBar.style.width = '0%';
 
-            cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, function () {
-                splash.style.display = 'none';
-            });
-        }
+        //     cc.director.once(cc.Director.EVENT_AFTER_SCENE_LAUNCH, function () {
+        //         splash.style.display = 'none';
+        //     });
+        // }
 
         var onStart = function () {
             cc.view.resizeWithBrowserSize(true);
@@ -94,7 +94,7 @@
                     cc.view.enableRetina(true);
                 }
                 if (cc.sys.isBrowser) {
-                    setLoadingDisplay();
+                    // setLoadingDisplay();
                 }
 
                 if (cc.sys.isMobile) {
@@ -150,7 +150,7 @@
 
         // jsList
         var jsList = settings.jsList;
-        var bundledScript = settings.debug ? 'src/project.dev.js' : 'src/project.js';
+        var bundledScript = settings.debug ? 'src/project.dev.js' : 'src/project.b6c7b.js';
         if (jsList) {
             jsList = jsList.map(function (x) { return 'src/' + x; });
             jsList.push(bundledScript);
@@ -188,8 +188,8 @@
                 BK.Script.loadlib('GameRes://' + url);
             };
             require('libs/qqplay-adapter.js');
-            require('src/settings.js');
-            require(window._CCSettings.debug ? 'cocos2d-js.js' : 'cocos2d-js-min.js');
+            require('src/settings.bb62d.js');
+            require(window._CCSettings.debug ? 'cocos2d-js.js' : 'cocos2d-js-min.dac82.js');
             require('libs/qqplay-downloader.js');
             var prevPipe = cc.loader.md5Pipe || cc.loader.assetLoader;
             cc.loader.insertPipeAfter(prevPipe, qqPlayDownloader);
@@ -199,7 +199,7 @@
     }
 
     if (false) {
-        require(window._CCSettings.debug ? 'cocos2d-js.js' : 'cocos2d-js-min.js');
+        require(window._CCSettings.debug ? 'cocos2d-js.js' : 'cocos2d-js-min.dac82.js');
         var prevPipe = cc.loader.md5Pipe || cc.loader.assetLoader;
         cc.loader.insertPipeAfter(prevPipe, wxDownloader);
         boot();
@@ -207,19 +207,19 @@
     }
 
     if (window.jsb) {
-        require('src/settings.js');
+        require('src/settings.bb62d.js');
         require('src/jsb_polyfill.js');
         boot();
         return;
     }
 
     if (window.document) {
-        var splash = document.getElementById('splash');
-        splash.style.display = 'block';
+        // var splash = document.getElementById('splash');
+        // splash.style.display = 'block';
 
         var cocos2d = document.createElement('script');
         cocos2d.async = true;
-        cocos2d.src = window._CCSettings.debug ? 'cocos2d-js.js' : 'cocos2d-js-min.js';
+        cocos2d.src = window._CCSettings.debug ? 'cocos2d-js.js' : 'cocos2d-js-min.dac82.js';
 
         var engineLoaded = function () {
             document.body.removeChild(cocos2d);
