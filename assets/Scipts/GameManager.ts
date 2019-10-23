@@ -32,6 +32,7 @@ export class GameManager extends Component {
     start () {
         this.curState = GameState.GS_INIT;
         this.playerCtrl.node.on('JumpEnd', this.onPlayerJumpEnd, this);
+        console.log("test");
     }
 
     init() {
