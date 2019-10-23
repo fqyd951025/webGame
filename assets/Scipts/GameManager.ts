@@ -35,7 +35,7 @@ export class GameManager extends Component {
     }
 
     init() {
-        this.startMenu.active = true;
+        this.curState = GameState.GS_INIT;
         this.generateRoad();
         this.playerCtrl.setInputActive(false);
         this.playerCtrl.node.setPosition(cc.v3());
