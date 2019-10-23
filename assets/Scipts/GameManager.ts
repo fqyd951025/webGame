@@ -48,7 +48,7 @@ export class GameManager extends Component {
                 this.init();
                 break;
             case GameState.GS_PLAYING:
-                this.startMenu.active = false;
+                this.startMenu.active = false;console.log("1213");
                 this.stepsLabel.string = '0';   // 将步数重置为0
                 setTimeout(() => {      //直接设置active会直接开始监听鼠标事件，做了一下延迟处理
                     this.playerCtrl.setInputActive(true);
