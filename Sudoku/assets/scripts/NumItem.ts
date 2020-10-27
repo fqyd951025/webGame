@@ -17,13 +17,21 @@ export default class NumItem extends cc.Component {
     private curColor:cc.Color;
 
     onLoad(){
-        this.node.on(cc.Node.EventType.TOUCH_END, this.selectGezi, this);
+        
     }
 
-    init(i, j){
+    init(i, j, num, bgcolor, numcolor){
         this.ii = i;
         this.jj = j;
+        bgcolor && this.setBgColor(bgcolor);
+        numcolor && this.setNumColor(numcolor);
         MessageCenter.delListen(this);
+        this.node.off(cc.Node.EventType.TOUCH_END);
+        if(0 < num){
+            this.setNum(num);
+            return;
+        }
+        this.node.on(cc.Node.EventType.TOUCH_END, this.selectGezi, this);
         MessageCenter.addListen(this, (num)=>{
             this.num.string = num;
         }, MessageID.MsgID_SelectNum + SudokuData.strIndex(i, j));
@@ -35,8 +43,8 @@ export default class NumItem extends cc.Component {
 
     selectGezi(event){
         console.log(`坐标 i=${this.ii}, j=${this.jj}`);
-        this.bg.color = cc.Color.BLACK;
         MessageCenter.sendMessage(MessageID.MsgID_SelectGeZi, [this.ii, this.jj]);
+        this.bg.color = cc.Color.BLACK;
     }
 
     setBgColor(color:cc.Color){
@@ -54,5 +62,6 @@ export default class NumItem extends cc.Component {
 
     onDestroy(){
         MessageCenter.delListen(this);
+        this.node.off(cc.Node.EventType.TOUCH_END);
     }
 }

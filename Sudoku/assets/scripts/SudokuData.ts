@@ -33,4 +33,16 @@ export default class SudokuData {
     static strIndex(i, j){
         return `${i}${j}`;
     }
+
+    static getNM(i, j) {
+        return [this.getIndex(i), this.getIndex(j)];
+    }
+
+    static getIndex(i) {
+        var n;
+        if (i < 3) n = 0;
+        else if (i < 6) n = 3;
+        else n = 6;
+        return n;
+    }
 }

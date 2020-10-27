@@ -23,8 +23,7 @@ export default class AlertPanel extends BasePanel {
 
     onCreate(msg?: any){
         super.onCreate(msg);
-        this.setCloseButton("btnClose");
-        this.setButtonClicked(cc.find("btnConfirm", this._rootView), this.close, this);
+        this.setCloseButton("btnConfirm");
     }
 
     renderUI(str?: any){

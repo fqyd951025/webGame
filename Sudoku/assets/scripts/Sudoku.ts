@@ -1,4 +1,5 @@
 import SudokuData from "./SudokuData";
+import { safeLoadRes } from "./common/SafeLoader";
 
 const { ccclass, property } = cc._decorator;
 
@@ -21,6 +22,16 @@ export default class Sudoku extends cc.Component {
         this.sudokuUI.removeAllChildren();
         this.selectNum.removeAllChildren();
         SudokuData.addListen();
+
+        safeLoadRes("cfg/SudokuCfg", this.initData.bind(this), 6);
+    }
+
+    initData(err, res){
+        if(err){
+            console.log(`err = ${JSON.stringify(err)}`);
+            return;
+        }
+        var cfg = res.json[0]["sudo1"];
         for (let i = 0; i < 9; i++) {
             var selectItem = cc.instantiate(this.selectItem);
             var selectcomp = selectItem.getComponent("SelectItem");
@@ -32,33 +43,17 @@ export default class Sudoku extends cc.Component {
             for (let j = 0; j < 9; j++) {
                 var numNode = cc.instantiate(this.numItem);
                 var numcomp = numNode.getComponent("NumItem");
-                var [n, m] = this.getNM(i, j);
-                var color1 = new cc.Color(79, 128, 190, 170);
+                var [n, m] = SudokuData.getNM(i, j);
+                var num = cfg[i][j];
+                var numcolor = 0 < num ? new cc.Color(180, 218, 222, 255) : new cc.Color(240, 250, 240, 222);
+                var bgcolor = new cc.Color(79, 128, 190, 170);
                 if (n == 0 && m == 3 || n == 3 && m == 0 || n == 3 && m == 6 || n == 6 && m == 3) {
-                    color1 = new cc.Color(243, 194, 239, 170)
+                    bgcolor = new cc.Color(243, 194, 239, 170);
                 }
-                numcomp.init(i, j);
-                numcomp.setBgColor(color1);
-                numcomp.setNum("");
+                numcomp.init(i, j, num, bgcolor, numcolor);
                 this.sudokuUI.addChild(numNode);
             }
         }
-    }
-    
-    getNM(i, j) {
-        return [this.getIndex(i), this.getIndex(j)];
-    }
-
-    getIndex(i) {
-        var n;
-        if (i < 3) n = 0;
-        else if (i < 6) n = 3;
-        else n = 6;
-        return n;
-    }
-
-    start() {
-
     }
 
     update(dt) { 
