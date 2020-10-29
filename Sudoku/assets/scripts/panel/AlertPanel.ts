@@ -8,29 +8,33 @@ import { UILayerType } from "../uiframe/LayerType";
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class AlertPanel extends BasePanel {
 
     private renderTimer = null;
 
-    constructor(){
+    constructor() {
         super();
         this._resName = "panel/AlertPanel";
         this._layer = UILayerType.Main;
     }
 
-    onCreate(msg?: any){
+    onCreate(msg?: any) {
         super.onCreate(msg);
         this.setCloseButton("btnConfirm");
     }
 
-    renderUI(str?: any){
+    renderUI(str?: any) {
         this.renderTimer && clearTimeout(this.renderTimer);
-        this.renderTimer = setTimeout(()=>{
-            let text = cc.find("text", this._rootView).getComponent(cc.Label);
-            text.string = str;
-        },30);
+        this.renderTimer = setTimeout(() => {
+            try {
+                let text = cc.find("text", this._rootView).getComponent(cc.Label);
+                text.string = str;
+            } catch (error) {
+                this.renderUI(str);
+            }
+        }, 30);
     }
 }

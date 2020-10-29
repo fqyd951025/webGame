@@ -437,9 +437,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 111,
-      "g": 17,
-      "b": 17,
+      "r": 40,
+      "g": 133,
+      "b": 195,
       "a": 255
     },
     "_contentSize": {
@@ -495,8 +495,8 @@
       }
     ],
     "_useOriginalSize": false,
-    "_string": "请选择需要填数的格子后再选择要填数字",
-    "_N$string": "请选择需要填数的格子后再选择要填数字",
+    "_string": "",
+    "_N$string": "",
     "_fontSize": 34,
     "_lineHeight": 70,
     "_enableWrapText": true,
@@ -619,9 +619,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 63,
-      "g": 172,
-      "b": 233,
+      "r": 94,
+      "g": 223,
+      "b": 255,
       "a": 255
     },
     "_contentSize": {
@@ -683,9 +683,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 117,
-      "g": 255,
-      "b": 238,
+      "r": 199,
+      "g": 199,
+      "b": 199,
       "a": 255
     },
     "_contentSize": {

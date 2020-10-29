@@ -11,5 +11,8 @@ export enum MessageID {
 	MsgID_FightProgress,
 	MsgID_SelectGeZi,
 	MsgID_SelectNum,
+	MsgID_SelectNumTips,
 	MsgID_ReSetSelected,
+	MsgID_CheHui,
+	MsgID_GeziMask,
 }
