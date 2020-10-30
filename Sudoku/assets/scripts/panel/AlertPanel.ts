@@ -26,7 +26,7 @@ export default class AlertPanel extends BasePanel {
         this.setCloseButton("btnConfirm");
     }
 
-    renderUI(str?: any) {
+    renderUI(str?: any, callback:Function = null) {
         this.renderTimer && clearTimeout(this.renderTimer);
         this.renderTimer = setTimeout(() => {
             try {

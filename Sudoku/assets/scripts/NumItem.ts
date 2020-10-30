@@ -8,6 +8,8 @@ const { ccclass, property } = cc._decorator;
 export default class NumItem extends cc.Component {
 
     @property(cc.Node)
+    tipsmask: cc.Node = null;
+    @property(cc.Node)
     mask: cc.Node = null;
     @property(cc.Node)
     bg: cc.Node = null;
@@ -55,6 +57,7 @@ export default class NumItem extends cc.Component {
         //监听提示数变化
         MessageCenter.addListen(this, (param) => {
             var [spliceNum, isSelectNum = false] = param;
+            if (!SudokuData.isTips) return;
             this.setTipsNum(spliceNum, isSelectNum);
             SudokuData.changelist[this.ii][this.jj] = this.num.string;
         }, SudokuData.strIndex(MessageID.MsgID_SelectNumTips, this.ii, this.jj));
@@ -67,12 +70,14 @@ export default class NumItem extends cc.Component {
 
     selectGezi() {
         console.log(`坐标 i=${this.ii}, j=${this.jj}`);
-        this.bg.color = cc.Color.BLACK;
         MessageCenter.sendMessage(MessageID.MsgID_SelectGeZi, [this.ii, this.jj]);
+        this.bg.color = cc.Color.BLACK;
         var list = SudokuData.getZuobiaos(this.ii, this.jj);
         SudokuData.closeMask();
-        for (let k = 0; k < list.length; k++) {
-            MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_GeziMask, list[k][0], list[k][1]), true);
+        if (!SudokuData.isTips) {
+            for (let k = 0; k < list.length; k++) {
+                MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_GeziMask, list[k][0], list[k][1]), true);
+            }
         }
     }
 
@@ -87,27 +92,42 @@ export default class NumItem extends cc.Component {
     }
 
     setTipsNum(spliceNum, isSelectNum = false) {
-        if(!isSelectNum){
+        if (!isSelectNum) {
             this.num.string = spliceNum;
             return;
         }
         var str = new String(SudokuData.changelist[this.ii][this.jj]);
-        if(!str) str = "";
+        if (!str) str = "";
         var nums = str.split("");
-        if(nums.length == 0 && !isSelectNum){
+        if (nums.length == 0 && !isSelectNum) {
             this.num.string = spliceNum;
         }
-        else{
+        else {
             var index = nums.indexOf(spliceNum + "");
             if (0 <= index && 1 < nums.length) {
                 nums.splice(index, 1);
             }
             this.num.string = nums.join("");
         }
+        this.tipsmask.active = this.num.string != "";
+
     }
 
     setNumColor(color: cc.Color) {
         this.num.node.color = color;
+    }
+
+    update(){
+        if(!SudokuData.canHandle) return;
+        if(!SudokuData.isTips){
+            this.tipsmask.active = false;
+            return;
+        }
+        if(SudokuData.sudoCfg[this.ii][this.jj] == 0){
+            this.tipsmask.active = true;
+        }else{
+            this.tipsmask.active = false;
+        }
     }
 
     onDestroy() {

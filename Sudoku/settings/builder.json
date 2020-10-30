@@ -1,5 +1,5 @@
 {
-  "title": "Goods",
+  "title": "Sudoku",
   "packageName": "",
   "startScene": "f889aec6-6981-482c-af8c-56e2c69a8b6f",
   "excludeScenes": [],
@@ -15,7 +15,7 @@
   "inlineSpriteFrames_native": true,
   "mergeStartScene": false,
   "optimizeHotUpdate": false,
-  "md5Cache": false,
+  "md5Cache": true,
   "encryptJs": true,
   "xxteaKey": "8c134af7-8c1c-4f",
   "zipCompressJs": true,

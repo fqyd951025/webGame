@@ -15,23 +15,32 @@ export default class Sudoku extends cc.Component {
     private mainUI: cc.Node;
     private sudokuUI: cc.Node;
     private selectNum: cc.Node;
+    private btns: cc.Node;
     private chongzhi: cc.Node;
     private tishi: cc.Node;
+    private isTips: cc.Node;
     private kaishi: cc.Node;
     private chehui: cc.Node;
+
+    private haoshi: cc.Label;
+    private saveTime = 0;
 
     onLoad() {
         this.mainUI = cc.find("mainUI", this.node);
         this.sudokuUI = cc.find("sudokuUI", this.mainUI);
         this.selectNum = cc.find("selectNum", this.mainUI);
-        this.chongzhi = cc.find("btn1", this.mainUI);
-        this.tishi = cc.find("btn2", this.mainUI);
-        this.kaishi = cc.find("btn3", this.mainUI);
-        this.chehui = cc.find("btn4", this.mainUI);
+        this.btns = cc.find("btns", this.mainUI);
+        this.chongzhi = cc.find("btn1", this.btns);
+        this.tishi = cc.find("btn2", this.btns);
+        this.isTips = cc.find("isTips", this.tishi);
+        this.kaishi = cc.find("btn3", this.btns);
+        this.chehui = cc.find("btn4", this.btns);
+        this.haoshi = cc.find("haoshi/time", this.mainUI).getComponent(cc.Label);
         SudokuData.addListen();
         this.createJiuGongGe();
         this.initTouchEvent();
         this.loadCfg();
+        this.isTips.active = SudokuData.isTips;
     }
     // 加载配置
     loadCfg() {
@@ -43,7 +52,9 @@ export default class Sudoku extends cc.Component {
             SudokuData.resetCfg = res.json[0]["sudo1"];
             SudokuData.sudoCfg = SudokuData.resetSudoCfg(SudokuData.resetCfg);//深拷贝保存原始数据来操作
             SudokuData.changelist = SudokuData.resetSudoCfg(SudokuData.resetCfg);
+            SudokuData.calcCount();
             this.initData(SudokuData.sudoCfg);
+            SudokuData.canHandle = true;
         }, 6);
     }
     // 创建九宫格
@@ -92,18 +103,32 @@ export default class Sudoku extends cc.Component {
 
     funChongzhi() {
         SudokuData.sudoCfg = SudokuData.resetSudoCfg(SudokuData.resetCfg);
+        SudokuData.changelist = SudokuData.resetSudoCfg(SudokuData.resetCfg);
+        SudokuData.handlelist = [];
         this.initData(SudokuData.sudoCfg);
+        SudokuData.sudoCount = 0;
         SudokuData.setCurPos(-1, -1);
         SudokuData.closeMask();
+        SudokuData.calcCount();
+        SudokuData.isTips = false;
+        this.isTips.active = SudokuData.isTips;
+        this.saveTime = 0;
+        SudokuData.isSucc = false;
     }
 
     funTishi() {
+        SudokuData.isTips = !SudokuData.isTips;
+        this.isTips.active = SudokuData.isTips;
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
                 var num = SudokuData.sudoCfg[i][j];
                 if (num == 0) {
-                    var nums = SudokuData.getMayNum(i, j, SudokuData.sudoCfg);
-                    MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNumTips, i, j), [nums, false]);
+                    if (SudokuData.isTips) {
+                        var nums = SudokuData.getMayNum(i, j, SudokuData.sudoCfg);
+                        MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNumTips, i, j), [nums, false]);
+                    } else {
+                        MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNum, i, j), 0);
+                    }
                 }
             }
         }
@@ -111,28 +136,34 @@ export default class Sudoku extends cc.Component {
 
     funKaishi() {
         SudokuData.closeMask();
+        this.saveTime = Date.now();
     }
 
     funChehui() {
         if (!SudokuData.handlelist.length) {
+            SudokuData.closeMask();
+            MessageCenter.sendMessage(MessageID.MsgID_SelectGeZi, [-1, -1]);
             return;
         }
         var [i, j, num] = SudokuData.handlelist.pop();
-        var ii = i, jj = j;
+        var ii = i, jj = j, num2 = 0;
         var len = SudokuData.handlelist.length;
-        if(1 < len){
+        SudokuData.changelist[i][j] = "";
+        SudokuData.setSudoVal(i, j, 0);
+        if (0 < len) {
             var handlast = SudokuData.handlelist[len - 1];
             ii = handlast[0];
             jj = handlast[1];
+            num2 = handlast[2];
         }
-        SudokuData.changelist[i][j] = "";
-        SudokuData.sudoCfg[i][j] = 0;
-        MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNum, i, j), 0);
         MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_CheHui, ii, jj));
+        MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNum, i, j), 0);
+        MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNum, ii, jj), num2);
+        if (!SudokuData.isTips) return;
         var list = SudokuData.getZuobiaos(i, j);
         for (let k = 0; k < list.length; k++) {
-            var num = SudokuData.sudoCfg[list[k][0]][list[k][1]];
-            if (num == 0) {
+            var num1 = SudokuData.sudoCfg[list[k][0]][list[k][1]];
+            if (num1 == 0) {
                 var nums = SudokuData.getMayNum(list[k][0], list[k][1], SudokuData.sudoCfg);
                 MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNumTips, list[k][0], list[k][1]), [nums, false]);
             }
@@ -140,7 +171,18 @@ export default class Sudoku extends cc.Component {
     }
 
     update(dt) {
-
+        if (this.saveTime == 0) {
+            this.haoshi.string = "00:00:00";
+        } else if(!SudokuData.isSucc){
+            var time = Date.now();
+            var h = Math.floor((time - this.saveTime) / 1000 / 60 / 60);
+            var m = Math.floor((time - this.saveTime) / 1000 / 60 - h * 60);
+            var s = Math.floor((time - this.saveTime) / 1000 - m * 60);
+            this.haoshi.string = `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}:${s < 10 ? "0" + s : s}`;
+            if(h == 23 && m == 59 && s == 59){
+                this.funChongzhi();
+            }
+        }
     }
 
     onDestroy() {

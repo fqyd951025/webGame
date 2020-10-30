@@ -9,6 +9,11 @@ export default class SudokuData {
     public static resetCfg: Array<Array<number>> = [];
     public static handlelist: Array<Array<number>> = [];
     public static changelist: Array<Array<string>> = [];
+    public static sudoCount = 0;
+    public static canHandle = false;
+
+    public static isTips = false;
+    public static isSucc = false;
 
     constructor() {
 
@@ -105,22 +110,74 @@ export default class SudokuData {
     }
 
     //校验是否可填
-    static judgeNum(i, j, num){
+    static judgeNum(i, j, num) {
         var list = this.getZuobiaos(i, j);
         for (let k = 0; k < list.length; k++) {
             var n = list[k][0];
             var m = list[k][1];
-            if(n == i && m == j) continue;
-            if(num == this.resetCfg[n][m]) return false;
+            if (n == i && m == j) continue;
+            if (num == this.resetCfg[n][m]) return false;
         }
         return true;
     }
-    
-    static closeMask(){
+
+    static closeMask() {
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
                 MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_GeziMask, i, j), false);
             }
         }
+    }
+
+    static calcCount() {
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                if (this.sudoCfg[i][j] != 0) this.sudoCount++;
+            }
+        }
+    }
+
+    static judgeResult() {
+        var arr = [], arr1 = [];
+        for (let n = 0; n < 9; n++) {
+            arr = [];
+            arr1 = [];
+            for (let m = 0; m < 9; m++) {
+                if (arr.includes(this.sudoCfg[n][m])) {
+                    return false;
+                }
+                arr.push(this.sudoCfg[n][m]);
+                if (arr1.includes(this.sudoCfg[m][n])) {
+                    return false;
+                }
+                arr1.push(this.sudoCfg[m][n]);
+            }
+        }
+        var indexs = [[0, 0], [0, 3], [0, 6], [3, 0], [3, 3], [3, 6], [6, 0], [6, 3], [6, 6]];
+        for (let q1 = 0; q1 < indexs.length; q1++) {
+            arr = [];
+            var n1 = indexs[q1][0];
+            var m1 = indexs[q1][1];
+            for (var n = n1; n < n1 + 3; n++) {
+                for (var m = m1; m < m1 + 3; m++) {
+                    if (arr.includes(this.sudoCfg[m][n])) {
+                        return false;
+                    }
+                    arr.push(this.sudoCfg[m][n]);
+                }
+            }
+        }
+        return true;
+    }
+
+    static setSudoVal(i, j, val) {
+        if (this.sudoCfg[i][j] == 0) {
+            SudokuData.sudoCount += val == 0 ? 0 : 1;
+        } else if (val == 0) {
+            SudokuData.sudoCount--;
+        }
+        this.sudoCfg[i][j] = val;
+        console.log(`SudokuData.sudoCount = ${SudokuData.sudoCount}`);
+
     }
 }
