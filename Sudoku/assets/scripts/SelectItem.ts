@@ -24,9 +24,6 @@ export default class SelectItem extends cc.Component {
     selectNum(event) {
         if (0 < this.selNum && this.selNum < 10) {
             console.log(`数字 num=${this.selNum}`);
-            if(SudokuData.saveTime == 0){
-                SudokuData.funKaishi();
-            }
             var [i, j] = SudokuData.getCurPos();
             var alertPanel;
             if (i < 0) {
@@ -38,6 +35,9 @@ export default class SelectItem extends cc.Component {
                 alertPanel = WindowManager.open(AlertPanel);
                 alertPanel.renderUI(`${this.selNum}在该格子不合规则\n请填其他数字！`);
                 return;
+            }
+            if(SudokuData.saveTime == 0){
+                SudokuData.funKaishi();
             }
             MessageCenter.sendMessage(SudokuData.strIndex(MessageID.MsgID_SelectNum, i, j), this.selNum);
             var list = SudokuData.getZuobiaos(i, j);
