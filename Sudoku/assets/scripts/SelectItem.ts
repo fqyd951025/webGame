@@ -24,6 +24,9 @@ export default class SelectItem extends cc.Component {
     selectNum(event) {
         if (0 < this.selNum && this.selNum < 10) {
             console.log(`数字 num=${this.selNum}`);
+            if(SudokuData.saveTime == 0){
+                SudokuData.funKaishi();
+            }
             var [i, j] = SudokuData.getCurPos();
             var alertPanel;
             if (i < 0) {

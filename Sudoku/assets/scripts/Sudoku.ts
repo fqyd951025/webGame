@@ -23,7 +23,6 @@ export default class Sudoku extends cc.Component {
     private chehui: cc.Node;
 
     private haoshi: cc.Label;
-    private saveTime = 0;
 
     onLoad() {
         this.mainUI = cc.find("mainUI", this.node);
@@ -112,7 +111,7 @@ export default class Sudoku extends cc.Component {
         SudokuData.calcCount();
         SudokuData.isTips = false;
         this.isTips.active = SudokuData.isTips;
-        this.saveTime = 0;
+        SudokuData.saveTime = 0;
         SudokuData.isSucc = false;
     }
 
@@ -135,8 +134,7 @@ export default class Sudoku extends cc.Component {
     }
 
     funKaishi() {
-        SudokuData.closeMask();
-        this.saveTime = Date.now();
+        SudokuData.funKaishi();
     }
 
     funChehui() {
@@ -171,13 +169,13 @@ export default class Sudoku extends cc.Component {
     }
 
     update(dt) {
-        if (this.saveTime == 0) {
+        if (SudokuData.saveTime == 0) {
             this.haoshi.string = "00:00:00";
         } else if(!SudokuData.isSucc){
             var time = Date.now();
-            var h = Math.floor((time - this.saveTime) / 1000 / 60 / 60);
-            var m = Math.floor((time - this.saveTime) / 1000 / 60 - h * 60);
-            var s = Math.floor((time - this.saveTime) / 1000 - m * 60);
+            var h = Math.floor((time - SudokuData.saveTime) / 1000 / 60 / 60);
+            var m = Math.floor((time - SudokuData.saveTime) / 1000 / 60 - h * 60);
+            var s = Math.floor((time - SudokuData.saveTime) / 1000 - m * 60);
             this.haoshi.string = `${h < 10 ? "0" + h : h}:${m < 10 ? "0" + m : m}:${s < 10 ? "0" + s : s}`;
             if(h == 23 && m == 59 && s == 59){
                 this.funChongzhi();

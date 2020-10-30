@@ -14,6 +14,7 @@ export default class SudokuData {
 
     public static isTips = false;
     public static isSucc = false;
+    public static saveTime = 0;
 
     constructor() {
 
@@ -179,5 +180,10 @@ export default class SudokuData {
         this.sudoCfg[i][j] = val;
         console.log(`SudokuData.sudoCount = ${SudokuData.sudoCount}`);
 
+    }
+
+    static funKaishi(){
+        this.closeMask();
+        this.saveTime = Date.now();
     }
 }
